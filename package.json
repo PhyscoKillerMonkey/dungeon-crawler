@@ -3,5 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "author": "Reece Bennett",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+  }
 }

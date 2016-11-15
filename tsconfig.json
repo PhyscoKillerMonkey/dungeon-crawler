@@ -4,9 +4,10 @@
         "target": "es5",
         "noImplicitAny": false,
         "sourceMap": true,
-        "outFile": "dist/app.js"
+        "outFile": "dist/game.js"
     },
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "src/breakout.ts"
     ]
 }
