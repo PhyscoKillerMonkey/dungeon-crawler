@@ -3,72 +3,23 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-// World constants
-var grid = {
-    size: 8,
-    width: 20,
-    height: 18,
-    scale: 4
-};
-var palette = [
-    ex.Color.fromHex("#cecead"),
-    ex.Color.fromHex("#a5a58c"),
-    ex.Color.fromHex("#6b6b52"),
-    ex.Color.fromHex("#292919")];
-// Create engine instance
-var game = new ex.Engine({
-    width: grid.size * grid.width * grid.scale,
-    height: grid.size * grid.height * grid.scale
-});
-// Create the loader and load textures
-var loader = new ex.Loader();
-var resources = {
-    txPlayer: new ex.Texture("/assets/player.png")
-};
-for (var r in resources) {
-    loader.addResource(resources[r]);
-}
-function keyHeld(key) {
-    if (game.input.keyboard.isHeld(ex.Input.Keys[key])) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-function keyPressed(key) {
-    if (game.input.keyboard.wasPressed(ex.Input.Keys[key])) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-function keyReleased(key) {
-    if (game.input.keyboard.wasReleased(ex.Input.Keys[key])) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-// Start game
-game.start(loader).then(function () {
-    game.setAntialiasing(false);
-    game.backgroundColor = palette[3];
+var PlayerClass;
+(function (PlayerClass) {
     var Player = (function (_super) {
         __extends(Player, _super);
-        function Player() {
+        function Player(texture, gridScale) {
             _super.call(this);
             this.speed = 32;
             this.facing = "up";
             this.facingStack = [];
             this.mV = new ex.Vector(0, 0);
+            this.texture = texture;
+            this.gridScale = gridScale;
         }
         Player.prototype.onInitialize = function (engine) {
             var idleSpeed = 500;
             var runSpeed = 200;
-            var spriteSheet = new ex.SpriteSheet(resources.txPlayer, 4, 5, 16, 16);
+            var spriteSheet = new ex.SpriteSheet(this.texture, 4, 5, 16, 16);
             var idleAnimU = spriteSheet.getAnimationBetween(engine, 8, 10, idleSpeed);
             idleAnimU.loop = true;
             var idleAnimR = spriteSheet.getAnimationBetween(engine, 2, 4, idleSpeed);
@@ -93,7 +44,7 @@ game.start(loader).then(function () {
             this.addDrawing("walkR", walkAnimR);
             this.addDrawing("walkD", walkAnimD);
             this.addDrawing("walkL", walkAnimL);
-            this.scale = new ex.Vector(grid.scale, grid.scale);
+            this.scale = new ex.Vector(this.gridScale, this.gridScale);
         };
         Player.prototype.update = function (engine, delta) {
             _super.prototype.update.call(this, engine, delta);
@@ -169,7 +120,64 @@ game.start(loader).then(function () {
         };
         return Player;
     }(ex.Actor));
-    var player = new Player();
+    PlayerClass.Player = Player;
+})(PlayerClass || (PlayerClass = {}));
+/// <reference path="player.ts" />
+var Player = PlayerClass.Player;
+// World constants
+var grid = {
+    size: 8,
+    width: 20,
+    height: 18,
+    scale: 4
+};
+var palette = [
+    ex.Color.fromHex("#cecead"),
+    ex.Color.fromHex("#a5a58c"),
+    ex.Color.fromHex("#6b6b52"),
+    ex.Color.fromHex("#292919")];
+// Create engine instance
+var game = new ex.Engine({
+    width: grid.size * grid.width * grid.scale,
+    height: grid.size * grid.height * grid.scale
+});
+// Create the loader and load textures
+var loader = new ex.Loader();
+var resources = {
+    txPlayer: new ex.Texture("/assets/player.png")
+};
+for (var r in resources) {
+    loader.addResource(resources[r]);
+}
+function keyHeld(key) {
+    if (game.input.keyboard.isHeld(ex.Input.Keys[key])) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+function keyPressed(key) {
+    if (game.input.keyboard.wasPressed(ex.Input.Keys[key])) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+function keyReleased(key) {
+    if (game.input.keyboard.wasReleased(ex.Input.Keys[key])) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+// Start game
+game.start(loader).then(function () {
+    game.setAntialiasing(false);
+    game.backgroundColor = palette[3];
+    var player = new Player(resources.txPlayer, grid.scale);
     player.x = game.getWidth() / 2;
     player.y = game.getHeight() / 2;
     game.add(player);
